@@ -24,3 +24,7 @@ CREATE TABLE orders
 	order_date text,
 	ship_city text
 );
+
+SELECT * FROM customers
+SELECT * FROM employees
+SELECT * FROM orders
