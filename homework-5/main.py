@@ -11,6 +11,7 @@ def main():
     db_name = 'my_new_db'
 
     params = config()
+
     conn = None
 
     create_database(params, db_name)
@@ -42,11 +43,18 @@ def main():
 
 def create_database(params, db_name) -> None:
     """Создает новую базу данных."""
-    pass
+
+    conn = psycopg2.connect(dbname='youtube', **params)
+    conn.autocommit = True
+    with conn.cursor() as cur:
+        cur.execute(f'DROP DATABASE IF EXISTS {db_name}')
+    with conn.cursor() as cur:
+        cur.execute(f'CREATE DATABASE {db_name}')
+    conn.close()
+
 
 def execute_sql_script(cur, script_file) -> None:
     """Выполняет скрипт из файла для заполнения БД данными."""
-
 
 
 def create_suppliers_table(cur) -> None:
