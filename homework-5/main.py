@@ -1,5 +1,5 @@
 import json
-
+import sqlite3
 import psycopg2
 
 from config import config
@@ -55,6 +55,9 @@ def create_database(params, db_name) -> None:
 
 def execute_sql_script(cur, script_file) -> None:
     """Выполняет скрипт из файла для заполнения БД данными."""
+    with open(script_file, 'r') as file:
+        file_sql = file.read()
+        cur.execute(file_sql)
 
 
 def create_suppliers_table(cur) -> None:
