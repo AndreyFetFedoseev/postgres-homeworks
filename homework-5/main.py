@@ -28,6 +28,7 @@ def main():
                 print("Таблица suppliers успешно создана")
 
                 suppliers = get_suppliers_data(json_file)
+                print([sup.get('products') for sup in suppliers])
                 insert_suppliers_data(cur, suppliers)
                 print("Данные в suppliers успешно добавлены")
 
@@ -62,22 +63,48 @@ def execute_sql_script(cur, script_file) -> None:
 
 def create_suppliers_table(cur) -> None:
     """Создает таблицу suppliers."""
-    pass
+    cur.execute("""
+        CREATE TABLE suppliers (
+            suppliers_id SERIAL PRIMARY KEY,
+            company_name VARCHAR(255),
+            contact VARCHAR(255),
+            address VARCHAR(255),
+            phone TEXT,
+            fax TEXT,
+            homepage VARCHAR(255)
+        )
+    """)
 
 
 def get_suppliers_data(json_file: str) -> list[dict]:
     """Извлекает данные о поставщиках из JSON-файла и возвращает список словарей с соответствующей информацией."""
-    pass
+    with open(json_file, 'r') as file:
+        data_json = json.load(file)
+        return data_json
 
 
 def insert_suppliers_data(cur, suppliers: list[dict]) -> None:
     """Добавляет данные из suppliers в таблицу suppliers."""
-    pass
+    for sups in suppliers:
+        cur.execute("""
+            INSERT INTO suppliers (company_name, contact, address, phone, fax, homepage)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """,
+                    (sups.get('company_name'), sups.get('contact'), sups.get('address'), sups.get('phone'),
+                     sups.get('fax'), sups.get('homepage'))
+                    )
 
 
 def add_foreign_keys(cur, json_file) -> None:
     """Добавляет foreign key со ссылкой на supplier_id в таблицу products."""
-    pass
+    with open(json_file, 'r') as f:
+        data_suppliers = json.load(f)
+        for supplier in data_suppliers:
+            if products.product_name in [prod for prod in supplier.get('product')]:
+                cur.execute("""
+                ALTER TABLE products ADD CONSTRAINT fk_products_suppliers FOREIGN KEY (product_name) REFERENCES suppliers(suppliers_id)
+                WHERE suppliers.company_name=  
+                """)
 
 
 if __name__ == '__main__':
